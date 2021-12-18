@@ -8,6 +8,7 @@ import './App.css';
 function App() {
   const [time, setTime] = useState(0);
   const [watchOn, setWatchOn] = useState(false);
+  const [waitClick, setWaitClick] = useState(false);
 
   useEffect(() => {
     const unsubscribe = new Subject();
@@ -26,7 +27,28 @@ function App() {
   console.log(time);
 
   const handleStart = () => {
-    setWatchOn((prevState) => !prevState);
+    if (waitClick) {
+      setWatchOn((prevState) => !prevState);
+      setWaitClick(false);
+    } else {
+      setWatchOn((prevState) => !prevState);
+      setTime(0);
+    }
+  };
+
+  const handleWait = (e) => {
+    let timer;
+    const showMessage = (count) => {
+      if (count >= 2) {
+        setWatchOn(false);
+        setWaitClick(true);
+      }
+    };
+    clearTimeout(timer);
+    timer = setTimeout(showMessage, 300, e.detail);
+  };
+
+  const handleReset = () => {
     setTime(0);
   };
 
@@ -36,8 +58,8 @@ function App() {
         <Stopwatch time={time} />
         <div className="buttons">
           <Button text={'Start/Stop'} action={handleStart} />
-          <Button text={'Wait'} />
-          <Button text={'Reset'} />
+          <Button text={'Wait'} action={handleWait} />
+          <Button text={'Reset'} action={handleReset} />
         </div>
       </div>
     </div>
